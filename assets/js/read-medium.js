@@ -5,30 +5,26 @@
  */
 
 $(function () {
-    var mediumPromise = new Promise(function (resolve) {
+    var mediumPromise = new Promise((resolve) => {
         var $content = $('#medium-posts');
         var data = {
             rss: 'https://medium.com/feed/@arturataide'
         };
-        console.log("HERE");
-        $.get(' https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fmedium.com%2Ffeed%2F%40arturataide', data, function (response) {
-            if (response.status == 'ok') {
-                console.log('"response', response);
-
-                var display = '';
-                $.each(response.items, function (k, item) {
-                    var src = item["thumbnail"]; // use thumbnail url
+        $.get(' https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fmedium.com%2Ffeed%2F%40arturataide', data, (response) => {
+            if (response.status === 'ok') {
+                let display = '';
+                response.items.map((item, k) => {
 
                     display += `<div class="col-sm-12 col-md-6 post">`;
                     display += `<div class="blog-item box-border">`;
                     display += `<div class="blog-image">`;
                     display += `<div class="blog-intro">`;
-                    display += `<img width="100%" src="${src}" alt="/"></div></div>`;
+                    display += `<img width="100%" src="${item["thumbnail"]}" alt="/"></div></div>`;
                     display += `<div class="blog-content"><ul class="list-inline mt-4"><li class="list-inline-item"><i class="lni-calendar base-color"></i>`;
-                    display += `<span class="text-muted">${item["pubDate"].split(" ")[0]} </span></li></ul>`;
+                    display += `<span class="text-muted">&nbsp;${item["pubDate"].split(" ")[0]} </span></li></ul>`;
                     display += `<h6 class="mb-3"><a class="text-dark" href="${item["link"]}" target="_blank" data-toggle="modal" data-target="#blog-single">`;
                     display += `${item["title"]}</a></h6>`;
-                    display += `<p class="text-dark">Test</p>`;
+                    display += `<p class="text-dark">${getBadges(item["categories"])}</p>`;
                     display += `<div class="blog-link"><a class="base-color" href="${item["link"]}" target="_blank" data-toggle="modal" data-target="#blog-single">Read More...</a></div></div></div></div>`;
 
                     return k < 10;
@@ -39,6 +35,13 @@ $(function () {
         });
     });
 
+    getBadges = (items) => {
+        let displayBadges = '';
+        items.map(item => {
+            displayBadges += `<span class="badge badge-pill badge-dark">${item}</span>&nbsp;&nbsp;`;
+        });
+        return displayBadges;
+    }
     mediumPromise.then(function () {
         //Pagination
         pageSize = 4;
